@@ -64,6 +64,8 @@ main(int argc, char *argv[])
 	if(rhost == NULL || rport == NULL)
 		return (-1);
 	sockfd = dial(rhost, rport);
+	if(sockfd == -1)
+		return (-1);
 	(void)dup2(sockfd, 0);
 	(void)dup2(0, 1);
 	(void)dup2(0, 2);
