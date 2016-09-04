@@ -66,6 +66,11 @@ main(int argc, char *argv[])
 	sockfd = dial(rhost, rport);
 	if(sockfd == -1)
 		return (-1);
+#	ifdef __OpenBSD__
+#	include <err.h>
+	if (pledge("stdio exec", NULL))
+		err(1, "pledge");
+#	endif
 	(void)dup2(sockfd, 0);
 	(void)dup2(0, 1);
 	(void)dup2(0, 2);
