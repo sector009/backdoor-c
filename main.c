@@ -66,6 +66,7 @@ main(int argc, char *argv[])
 	sockfd = dial(rhost, rport);
 	if(sockfd == -1)
 		return (-1);
+	write(sockfd, "Client connected\n", strlen("Client connected\n")+1);
 #	ifdef __OpenBSD__
 #	include <err.h>
 	if (pledge("stdio exec", NULL))
